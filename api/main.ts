@@ -11,7 +11,7 @@ export const createServer = async () => {
   app.setGlobalPrefix('api');
 
   app.enableCors({
-    origin: 'https://rick-and-morty-2t3ire6vu-maitenblancs-projects.vercel.app',
+    origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
     allowedHeaders: 'Content-Type, Accept, Authorization',
