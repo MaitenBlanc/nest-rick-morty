@@ -19,16 +19,23 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           url: databaseUrl,
           host: databaseUrl
             ? undefined
-            : configService.get('DB_HOST', 'localhost'),
-          port: databaseUrl ? undefined : +configService.get('DB_PORT', 5432),
+            : configService.get<string>('DB_HOST', 'localhost'),
+          port: databaseUrl
+            ? undefined
+            : configService.get<number>('DB_PORT', 5432),
           username: databaseUrl
             ? undefined
-            : configService.get('DB_USERNAME', 'postgres'),
-          password: databaseUrl ? undefined : configService.get('DB_PASSWORD'),
-          database: databaseUrl ? undefined : configService.get('DB_NAME'),
+            : configService.get<string>('DB_USERNAME', 'postgres'),
+          password: databaseUrl
+            ? undefined
+            : configService.get<string>('DB_PASSWORD'),
+          database: databaseUrl
+            ? undefined
+            : configService.get<string>('DB_NAME'),
           autoLoadEntities: true,
           synchronize: true,
           ssl: databaseUrl ? { rejectUnauthorized: false } : false,
+          logging: process.env.NODE_ENV !== 'production',
         };
       },
     }),
