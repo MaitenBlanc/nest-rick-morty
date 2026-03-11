@@ -27,5 +27,11 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT || 3000);
 }
+let server: any;
 
-export default bootstrap();
+export default async (req: any, res: any) => {
+  if (!server) {
+    server = await bootstrap();
+  }
+  return server(req, res);
+};
