@@ -8,26 +8,15 @@ const server = express();
 
 export const createServer = async () => {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
-
   app.setGlobalPrefix('api');
 
   app.enableCors({
-    origin: true,
+    origin: 'https://rick-and-morty-2t3ire6vu-maitenblancs-projects.vercel.app',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
+    allowedHeaders: 'Content-Type, Accept, Authorization',
   });
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
-
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   await app.init();
-};
-
-export default async (req: any, res: any) => {
-  await createServer();
-  return server(req, res);
 };
