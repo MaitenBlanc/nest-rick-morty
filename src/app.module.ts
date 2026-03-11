@@ -8,10 +8,15 @@ import { AuthModule } from './auth/auth.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DATABASE_URL || 'VALOR_NO_DETECTADO',
+      url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: true,
-      ssl: { rejectUnauthorized: false },
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
     }),
     AuthModule,
   ],
