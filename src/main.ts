@@ -1,31 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  app.setGlobalPrefix('api');
-
-  app.enableCors({
-    origin: true,
-    credentials: true,
-  });
-
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
-
-  if (process.env.NODE_ENV === 'production') {
-    await app.init();
-    return app.getHttpAdapter().getInstance();
-  }
-
-  await app.listen(process.env.PORT || 3000);
+  app.enableCors();
+  await app.init();
+  return app.getHttpAdapter().getInstance();
 }
 
-export default bootstrap();
+const server = bootstrap();
+export default server;

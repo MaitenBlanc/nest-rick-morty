@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DATABASE_URL,
+      url: process.env.DATABASE_URL || process.env.POSTGRES_URL,
       autoLoadEntities: true,
       synchronize: true,
       ssl: true,
@@ -21,11 +21,4 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
 })
-export class AppModule {
-  constructor() {
-    console.log('--- DEBUG VERCEL ---');
-    console.log('DATABASE_URL existe:', !!process.env.DATABASE_URL);
-    console.log('NODE_ENV:', process.env.NODE_ENV);
-    console.log('-------------------');
-  }
-}
+export class AppModule {}
