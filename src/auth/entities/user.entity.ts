@@ -28,7 +28,7 @@ export class User {
     nullable: true,
     default: 'https://i.stack.imgur.com/l60Hf.png',
   })
-  profilePicture: string;
+  imgProfile: string;
 
   @Column('text', { nullable: true })
   address: string;
