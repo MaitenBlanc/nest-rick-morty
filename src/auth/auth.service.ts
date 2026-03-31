@@ -70,17 +70,11 @@ export class AuthService {
         where: { id },
       });
 
+      if (!updatedUser) throw new BadRequestException('User not found');
+
       return updatedUser;
     } catch (error) {
-      // 23505 es violación de restricción UNIQUE en Neon
-      if (error.code === '23505') {
-        throw new BadRequestException('El nickname ingresado ya está en uso');
-      }
-
-      console.log(error);
-      throw new InternalServerErrorException(
-        'Error inesperado al actualizar el perfil',
-      );
+      this.handleDBErrors(error);
     }
   }
 
