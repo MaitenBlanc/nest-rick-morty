@@ -12,6 +12,7 @@ import * as bcrypt from 'bcryptjs';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -59,6 +60,28 @@ export class AuthService {
       user: userWithoutPassword,
       token: this.getJwtToken({ id: user.id }),
     };
+  }
+
+  async updateProfile(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      await this.userRepository.update(id, updateUserDto);
+
+      const updatedUser = await this.userRepository.findOne({
+        where: { id },
+      });
+
+      return updatedUser;
+    } catch (error) {
+      // 23505 es violación de restricción UNIQUE en Neon
+      if (error.code === '23505') {
+        throw new BadRequestException('El nickname ingresado ya está en uso');
+      }
+
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Error inesperado al actualizar el perfil',
+      );
+    }
   }
 
   checkAuthStatus(user: User) {
