@@ -26,7 +26,7 @@ export class User {
 
   @Column('text', {
     nullable: true,
-    default: 'https://i.stack.imgur.com/l60Hf.png',
+    default: 'https://c.psprices.com/400/01a5be07a4119cc35580bbfc2fe17ab9.webp',
   })
   imgProfile: string;
 
