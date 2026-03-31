@@ -15,6 +15,21 @@ export class User {
   @Column('text', { select: false })
   password: string;
 
+  @Column('text', { unique: true })
+  nickname: string;
+
+  @Column('text', { array: true, default: ['user'] })
+  roles: string[];
+
+  @Column('text', { nullable: true })
+  birthdate: string;
+
+  @Column('text', {
+    nullable: true,
+    default: 'https://i.stack.imgur.com/l60Hf.png',
+  })
+  profilePicture: string;
+
   @Column('text', { nullable: true })
   address: string;
 
