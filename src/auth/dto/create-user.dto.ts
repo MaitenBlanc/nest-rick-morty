@@ -32,15 +32,19 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
-  location?: string;
-
-  @IsString()
-  @IsOptional()
   birthdate?: string;
 
   @IsString()
   @IsOptional()
   address?: string;
+
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
+  @IsString()
+  state?: string;
 
   @IsInt()
   @IsOptional()
