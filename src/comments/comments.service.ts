@@ -23,7 +23,12 @@ export class CommentsService {
       userId,
     });
 
-    return await this.commentRepository.save(newComment);
+    const savedComment = await this.commentRepository.save(newComment);
+
+    return await this.commentRepository.findOne({
+      where: { id: savedComment.id },
+      relations: ['user'],
+    });
   }
 
   async findAllByEpisode(episodeId: number) {
