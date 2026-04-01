@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BeforeInsert,
+  OneToMany,
+} from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { Favorite } from 'src/favorites/entities/favorite.entity';
 
 @Entity('users')
 export class User {
@@ -41,6 +48,9 @@ export class User {
 
   @Column('int', { nullable: true })
   zip: number;
+
+  @OneToMany(() => Favorite, (favorite) => favorite.user)
+  favorites: Favorite[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
