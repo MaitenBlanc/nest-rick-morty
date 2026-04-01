@@ -9,15 +9,25 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from './entities/comment.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
+import { LockedEpisodes } from './entities/locked-episodes.entity';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
+    @InjectRepository(LockedEpisodes)
+    private readonly lockedRepository: Repository<LockedEpisodes>,
   ) {}
 
-  async create(userId: string, createCommentDto: CreateCommentDto) {
+  async create(userId: string, createCommentDto: CreateCommentDto, user: User) {
+    const locked = await this.isLocked(createCommentDto.episodeId);
+    const isAdmin = user.roles.includes('admin');
+
+    if (locked && !isAdmin) {
+      throw new UnauthorizedException('Commits are locked for this episode.');
+    }
+
     const newComment = this.commentRepository.create({
       ...createCommentDto,
       userId,
@@ -65,14 +75,17 @@ export class CommentsService {
     if (!comment)
       throw new NotFoundException(`Comment with ID ${id} not found`);
 
-    if (comment.userId !== user.id) {
+    const isOwner = comment.userId === user.id;
+    const isAdmin = user.roles.includes('admin');
+
+    if (!isOwner && !isAdmin) {
       throw new UnauthorizedException(
         'You are not authorized to delete this comment',
       );
     }
 
     await this.commentRepository.remove(comment);
-    return { delete: true };
+    return { deleted: true };
   }
 
   async toggleStatus(id: string) {
@@ -83,5 +96,22 @@ export class CommentsService {
 
     comment.isActive = !comment.isActive;
     return await this.commentRepository.save(comment);
+  }
+
+  async toggleLock(episodeId: number) {
+    let lockEntry = await this.lockedRepository.findOneBy({ episodeId });
+
+    if (lockEntry) {
+      lockEntry.isLocked = !lockEntry.isLocked;
+    } else {
+      lockEntry = this.lockedRepository.create({ episodeId, isLocked: true });
+    }
+
+    return await this.lockedRepository.save(lockEntry);
+  }
+
+  async isLocked(episodeId: number): Promise<boolean> {
+    const entry = await this.lockedRepository.findOneBy({ episodeId });
+    return entry ? entry.isLocked : false;
   }
 }

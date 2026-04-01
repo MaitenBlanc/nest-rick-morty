@@ -9,6 +9,7 @@ import {
   UseGuards,
   ParseIntPipe,
   ParseUUIDPipe,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -24,7 +25,7 @@ export class CommentsController {
   @Post()
   @UseGuards(AuthGuard('jwt'))
   create(@Body() createCommentDto: CreateCommentDto, @GetUser() user: User) {
-    return this.commentsService.create(user.id, createCommentDto);
+    return this.commentsService.create(user.id, createCommentDto, user);
   }
 
   @Get('episode/:episodeId')
@@ -52,5 +53,23 @@ export class CommentsController {
   @UseGuards(AuthGuard('jwt'))
   toggleStatus(@Param('id', ParseUUIDPipe) id: string) {
     return this.commentsService.toggleStatus(id);
+  }
+
+  @Patch('lock/:episodeId')
+  @UseGuards(AuthGuard('jwt'))
+  async toggleLock(
+    @Param('episodeId', ParseIntPipe) episodeId: number,
+    @GetUser() user: User,
+  ) {
+    if (!user.roles.includes('admin')) {
+      throw new UnauthorizedException('Only admins can toggle the lock.');
+    }
+
+    return this.commentsService.toggleLock(episodeId);
+  }
+
+  @Get('lock-status/:episodeId')
+  checkLock(@Param('episodeId', ParseIntPipe) episodeId: number) {
+    return this.commentsService.isLocked(episodeId);
   }
 }
