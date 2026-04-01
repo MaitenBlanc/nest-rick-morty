@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Favorite } from 'src/favorites/entities/favorite.entity';
+import { Comment } from '../../comments/entities/comment.entity';
 
 @Entity('users')
 export class User {
@@ -51,6 +52,9 @@ export class User {
 
   @OneToMany(() => Favorite, (favorite) => favorite.user)
   favorites: Favorite[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
