@@ -72,4 +72,13 @@ export class CommentsController {
   checkLock(@Param('episodeId', ParseIntPipe) episodeId: number) {
     return this.commentsService.isLocked(episodeId);
   }
+
+  @Get('admin/locked')
+  @UseGuards(AuthGuard('jwt'))
+  getLockedEpisodes(@GetUser() user: User) {
+    if (!user.roles?.includes('admin')) {
+      throw new UnauthorizedException('Only admins can view locked episodes.');
+    }
+    return this.commentsService.getLockedEpisodes();
+  }
 }

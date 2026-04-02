@@ -76,7 +76,7 @@ export class CommentsService {
       throw new NotFoundException(`Comment with ID ${id} not found`);
 
     const isOwner = comment.userId === user.id;
-    const isAdmin = user.roles.includes('admin');
+    const isAdmin = user.roles?.includes('admin');
 
     if (!isOwner && !isAdmin) {
       throw new UnauthorizedException(
@@ -113,5 +113,11 @@ export class CommentsService {
   async isLocked(episodeId: number): Promise<boolean> {
     const entry = await this.lockedRepository.findOneBy({ episodeId });
     return entry ? entry.isLocked : false;
+  }
+
+  async getLockedEpisodes() {
+    return await this.lockedRepository.find({
+      where: { isLocked: true },
+    });
   }
 }
