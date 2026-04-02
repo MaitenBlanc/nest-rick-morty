@@ -118,6 +118,7 @@ export class CommentsService {
   async getLockedEpisodes() {
     return await this.lockedRepository.find({
       where: { isLocked: true },
+      order: { createdAt: 'DESC' },
     });
   }
 }
